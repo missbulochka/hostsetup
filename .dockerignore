@@ -1,0 +1,4 @@
+.dockerignore
+Makefile
+docker/
+cmd/client/
