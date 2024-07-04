@@ -13,17 +13,18 @@ build-images:
 # You can run the base with docker
 run-base:
 	docker run \
-		--rm \
 		-p 8080:8080 \
-		-v .:/workspace/base \
+		-v .:/workspace/hostsetup \
+		--env-file=hs.env \
 		hostsetup-base:1.0 \
-		go run /workspace/base/cmd/service/main.go
+		go run /workspace/hostsetup/cmd/service/main.go
 		
 # You can run the service with docker
 run-service:
 	docker run \
 		--rm \
 		-p 8081:8081 \
+		--env-file=hs.env \
 		hostsetup:1.0
 
 # You can generate Client, Server and documentation using proto file
