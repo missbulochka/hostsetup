@@ -25,3 +25,11 @@ run-service:
 		--rm \
 		-p 8081:8081 \
 		hostsetup:1.0
+
+# You can generate Client, Server and documentation using proto file
+pb-generate:
+	protoc -I protos/proto -I protos \
+	--go_out protos/gen/ --go_opt paths=source_relative \
+	--go-grpc_out protos/gen/ --go-grpc_opt paths=source_relative \
+	--openapiv2_out protos/gen/openapi/ \
+	protos/proto/hostsetup/*.proto
