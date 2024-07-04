@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+
+package hostsetup;
+
+option go_package = "protos/gen/hostsetup";
+
+service HostSetup {
+    rpc SetHostname (HostnameRequest) returns (SuccessResponse) {
+        option (google.api.http) = {
+            post: "/hostname"
+            body: "*"
+        };
+    }
+    rpc ListDNSServers (EmptyRequest) returns (ListDNSServersResponse) {
+        option (google.api.http) = {
+            post: "/dnsservers"
+        };
+    }
+    rpc AddDNSServer (DNSServerRequest) returns (SuccessResponse) {
+        option (google.api.http) = {
+            post: "/dnsservers/{dnsServer}"
+            body: "*"
+        };
+    }
+    rpc DeleteDNSServer (DNSServerRequest) returns (SuccessResponse) {
+        option (google.api.http) = {
+            post: "/dnsservers/{dnsServer}"
+            body: "*"
+        };
+    }
+}
+
+message HostnameRequest {
+    string name = 1;
+}
+
+message SuccessResponse {
+    bool success = 1;
+}
+
+message EmptyRequest {}
+
+message ListDNSServersResponse {
+    repeated string list = 1;
+}
+
+message DNSServerRequest {
+    string dnsServer = 1;
+}
