@@ -17,6 +17,7 @@ run-base:
 		-p 8080:8080 \
 		-v .:/workspace/hostsetup \
 		--env-file=hs.env \
+		--cap-add SYS_ADMIN \
 		hostsetup-base:1.0 \
 		go run /workspace/hostsetup/cmd/service/main.go
 		
@@ -26,6 +27,7 @@ run-service:
 		--rm \
 		-p 8081:8081 \
 		--env-file=hs.env \
+		--cap-add SYS_ADMIN \
 		hostsetup:1.0
 
 # You can generate Client, Server and documentation using proto file
