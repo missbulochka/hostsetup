@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"hostsetup-service/internal/service/app"
 	"hostsetup-service/internal/service/config"
 	"log"
@@ -12,9 +11,8 @@ import (
 
 func main() {
 	cfg := config.MustLoadConfig()
-	fmt.Println(cfg)
 
-	hostsetupService := app.New(cfg)
+	hostsetupService := app.New(cfg.GRPCServer, cfg.GRPCPort)
 
 	go func() {
 		hostsetupService.GRPCSrv.MustStart()
