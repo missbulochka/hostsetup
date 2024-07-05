@@ -3,10 +3,13 @@ package setupping
 import (
 	"context"
 	"fmt"
+	services "hostsetup-service/internal/service/service"
 	"log"
 	"os"
 	"os/exec"
 )
+
+const pwdToDNS = "/etc/resolv.conf"
 
 type Setupping struct{}
 
@@ -37,8 +40,17 @@ func (sp *Setupping) SetHostname(ctx context.Context, hostname string) error {
 	return nil
 }
 
-func (sp *Setupping) ListDNSServers(ctx context.Context) error {
-	panic("unimplemented")
+// ListDNSServers return dns servers
+func (sp *Setupping) ListDNSServers(ctx context.Context, dnsServers *[]string) error {
+	const op = "hostsetup: setupping.ListDNSServers"
+
+	file, err := os.Open(pwdToDNS)
+	if err != nil {
+		return fmt.Errorf("%s:%w", op, err)
+	}
+	defer file.Close()
+
+	return services.ReadDNSServers(file, dnsServers)
 }
 
 func (sp *Setupping) AddDNSServer(ctx context.Context, dnsServer string) error {

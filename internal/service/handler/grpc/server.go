@@ -19,7 +19,7 @@ type ChangeHostname interface {
 }
 
 type SetupDNS interface {
-	ListDNSServers(ctx context.Context) error
+	ListDNSServers(ctx context.Context, dnsServers *[]string) error
 	AddDNSServer(ctx context.Context, dnsServer string) error
 	DeleteDNSServer(ctx context.Context, dnsServer string) error
 }
@@ -59,7 +59,12 @@ func (s *serverAPI) ListDNSServers(
 	ctx context.Context,
 	req *hsv1.EmptyRequest,
 ) (*hsv1.ListDNSServersResponse, error) {
-	panic("implement me!")
+	dnsServers := make([]string, 0, 1)
+	if err := s.setupDNS.ListDNSServers(ctx, &dnsServers); err != nil {
+		return &hsv1.ListDNSServersResponse{}, err
+	}
+
+	return &hsv1.ListDNSServersResponse{List: dnsServers}, nil
 }
 
 func (s *serverAPI) AddDNSServer(
