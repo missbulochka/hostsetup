@@ -3,7 +3,7 @@ package setupping
 import (
 	"context"
 	"fmt"
-	services "hostsetup-service/internal/service/service"
+	setupDNS "hostsetup-service/internal/service/service"
 	"log"
 	"os"
 	"os/exec"
@@ -50,7 +50,7 @@ func (sp *Setupping) ListDNSServers(ctx context.Context, dnsServers *[]string) e
 	}
 	defer file.Close()
 
-	return services.ReadDNSServers(file, dnsServers)
+	return setupDNS.ReadDNSServers(file, dnsServers)
 }
 
 func (sp *Setupping) AddDNSServer(ctx context.Context, dnsServer string) error {
