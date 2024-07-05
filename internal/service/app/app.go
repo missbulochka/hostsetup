@@ -2,15 +2,16 @@ package app
 
 import (
 	grpcapp "hostsetup-service/internal/service/app/grpc"
-	"hostsetup-service/internal/service/config"
+	spuc "hostsetup-service/internal/service/usecase"
 )
 
 type App struct {
 	GRPCSrv *grpcapp.App
 }
 
-func New(cfg *config.GRPCConfig) *App {
-	grpcApp := grpcapp.New(cfg.GRPCServer, cfg.GRPCPort)
+func New(server, port string) *App {
+	setupping := spuc.New()
+	grpcApp := grpcapp.New(server, port, setupping, setupping)
 
 	return &App{
 		GRPCSrv: grpcApp,

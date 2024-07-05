@@ -2,6 +2,7 @@ package grpcapp
 
 import (
 	"fmt"
+	setupgrpc "hostsetup-service/internal/service/handler/grpc"
 	"log"
 	"net"
 
@@ -14,10 +15,13 @@ type App struct {
 	port       string
 }
 
-func New(server, port string) *App {
+func New(server, port string,
+	changeHostname setupgrpc.ChangeHostname,
+	setupDNS setupgrpc.SetupDNS,
+) *App {
 	gRPCServer := grpc.NewServer()
 
-	// TODO: register server
+	setupgrpc.Register(gRPCServer, changeHostname, setupDNS)
 
 	return &App{
 		gRPCServer: gRPCServer,
