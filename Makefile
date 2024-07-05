@@ -13,6 +13,7 @@ build-images:
 # You can run the base with docker
 run-base:
 	docker run \
+		--rm \
 		-p 8080:8080 \
 		-v .:/workspace/hostsetup \
 		--env-file=hs.env \
