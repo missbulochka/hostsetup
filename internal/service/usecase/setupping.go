@@ -1,15 +1,19 @@
 package setupping
 
 import (
+	"bufio"
 	"context"
 	"fmt"
-	setupDNS "hostsetup-service/internal/service/service"
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 )
 
-const pwdToDNS = "/etc/resolv.conf"
+const (
+	pwdToResolvConf  = "/etc/resolv.conf"
+	resolvConfPrefix = "nameserver "
+)
 
 type Setupping struct{}
 
@@ -24,7 +28,6 @@ func (sp *Setupping) SetHostname(ctx context.Context, hostname string) error {
 	log.Printf("setting hostname")
 	cmd := exec.Command("hostname", hostname)
 	if err := cmd.Run(); err != nil {
-		fmt.Print("here")
 		return fmt.Errorf("%s:%w", op, err)
 	}
 
@@ -44,13 +47,26 @@ func (sp *Setupping) SetHostname(ctx context.Context, hostname string) error {
 func (sp *Setupping) ListDNSServers(ctx context.Context, dnsServers *[]string) error {
 	const op = "hostsetup: setupping.ListDNSServers"
 
-	file, err := os.Open(pwdToDNS)
+	file, err := os.Open(pwdToResolvConf)
 	if err != nil {
 		return fmt.Errorf("%s:%w", op, err)
 	}
 	defer file.Close()
 
-	return setupDNS.ReadDNSServers(file, dnsServers)
+	log.Printf("reading dns servers")
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.HasPrefix(line, resolvConfPrefix) {
+			*dnsServers = append(*dnsServers, strings.TrimPrefix(line, resolvConfPrefix))
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return fmt.Errorf("%s:%w", op, err)
+	}
+	log.Printf("dns servers successfully read")
+
+	return nil
 }
 
 func (sp *Setupping) AddDNSServer(ctx context.Context, dnsServer string) error {
