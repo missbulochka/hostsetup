@@ -12,3 +12,14 @@ func HostnameValidate(hostname string) error {
 	}
 	return nil
 }
+
+func IPValidate(dnsServer string) error {
+	val := validator.New(validator.WithRequiredStructEnabled())
+
+	err := val.Var(dnsServer, "required,ipv4")
+
+	if err != nil {
+		return err
+	}
+	return nil
+}

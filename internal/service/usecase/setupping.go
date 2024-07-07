@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	services "hostsetup-service/internal/service/service"
 	"log"
 	"os"
 	"os/exec"
@@ -11,8 +12,8 @@ import (
 )
 
 const (
-	pwdToResolvConf  = "/etc/resolv.conf"
-	resolvConfPrefix = "nameserver "
+	pwdToResolvConf  string = "/etc/resolv.conf"
+	resolvConfPrefix string = "nameserver "
 )
 
 type Setupping struct{}
@@ -28,15 +29,12 @@ func (sp *Setupping) SetHostname(ctx context.Context, hostname string) error {
 	log.Printf("setting hostname")
 	cmd := exec.Command("hostname", hostname)
 	if err := cmd.Run(); err != nil {
+		log.Printf("%s: %v", op, err)
 		return fmt.Errorf("%s:%w", op, err)
 	}
 
-	currentHostname, err := os.Hostname()
-	if err != nil {
-		return fmt.Errorf("%s:%w", op, err)
-	}
-	if currentHostname != hostname {
-		return fmt.Errorf("%s:%s", op, "failed to change hostname")
+	if err := services.VerifyHostname(hostname); err != nil {
+		return err
 	}
 	log.Printf("hostname set")
 
@@ -49,6 +47,7 @@ func (sp *Setupping) ListDNSServers(ctx context.Context, dnsServers *[]string) e
 
 	file, err := os.Open(pwdToResolvConf)
 	if err != nil {
+		log.Printf("%s: %v", op, err)
 		return fmt.Errorf("%s:%w", op, err)
 	}
 	defer file.Close()
@@ -62,6 +61,7 @@ func (sp *Setupping) ListDNSServers(ctx context.Context, dnsServers *[]string) e
 		}
 	}
 	if err := scanner.Err(); err != nil {
+		log.Printf("%s: %v", op, err)
 		return fmt.Errorf("%s:%w", op, err)
 	}
 	log.Printf("dns servers successfully read")
@@ -69,8 +69,35 @@ func (sp *Setupping) ListDNSServers(ctx context.Context, dnsServers *[]string) e
 	return nil
 }
 
+// AddDNSServer add new dns server in the system
 func (sp *Setupping) AddDNSServer(ctx context.Context, dnsServer string) error {
-	panic("unimplemented")
+	const op = "hostsetup: setupping.AddDNSServer"
+
+	file, err := os.OpenFile(pwdToResolvConf, os.O_APPEND|os.O_RDWR, 0666)
+	if err != nil {
+		log.Printf("%s: %v", op, err)
+		return fmt.Errorf("%s:%w", op, err)
+	}
+	defer file.Close()
+
+	line := resolvConfPrefix + dnsServer + "\n"
+	exist, err := services.DNSServerExists(file, line)
+	if err != nil {
+		return fmt.Errorf("%s:%s", op, err)
+	}
+	if exist {
+		log.Printf("%s: %v", op, "dns server already exist")
+		return fmt.Errorf("%s:%s", op, "dns server already exist")
+	}
+
+	log.Printf("adding dns server")
+	if _, err := file.WriteString(line); err != nil {
+		log.Printf("%s: %v", op, err)
+		return fmt.Errorf("%s:%w", op, err)
+	}
+	log.Printf("dns server added")
+
+	return nil
 }
 
 func (sp *Setupping) DeleteDNSServer(ctx context.Context, dnsServer string) error {

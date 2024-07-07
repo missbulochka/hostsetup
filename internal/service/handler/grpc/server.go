@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"context"
-	validator "hostsetup-service/internal/service/entity"
+	validate "hostsetup-service/internal/service/entity"
 	hsv1 "hostsetup-service/protos/gen/hostsetup"
 
 	"google.golang.org/grpc"
@@ -44,7 +44,7 @@ func (s *serverAPI) SetHostname(
 ) (*hsv1.SuccessResponse, error) {
 	hostname := req.Name
 
-	if err := validator.HostnameValidate(hostname); err != nil {
+	if err := validate.HostnameValidate(hostname); err != nil {
 		return &hsv1.SuccessResponse{Success: false}, err
 	}
 
@@ -71,7 +71,17 @@ func (s *serverAPI) AddDNSServer(
 	ctx context.Context,
 	req *hsv1.DNSServerRequest,
 ) (*hsv1.SuccessResponse, error) {
-	panic("implement me!")
+	dnsServer := req.DnsServer
+
+	if err := validate.IPValidate(dnsServer); err != nil {
+		return &hsv1.SuccessResponse{Success: false}, err
+	}
+
+	if err := s.setupDNS.AddDNSServer(ctx, dnsServer); err != nil {
+		return &hsv1.SuccessResponse{Success: false}, err
+	}
+
+	return &hsv1.SuccessResponse{Success: true}, nil
 }
 
 func (s *serverAPI) DeleteDNSServer(
