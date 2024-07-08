@@ -1,4 +1,8 @@
 .dockerignore
 Makefile
+hostname.png
+README.md
 docker/
 cmd/client/
+internal/client/
+protos/proto/
