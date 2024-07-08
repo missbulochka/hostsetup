@@ -24,15 +24,14 @@ func VerifyHostname(hostname string) error {
 	return nil
 }
 
-func DNSServerExists(file *os.File, dnsServerStr string) (bool, error) {
+func DNSServerExists(file *os.File, resolverString string) (bool, error) {
 	const op = "hostsetup: services.DNSServerExists"
 
-	dnsServerStr = strings.Trim(dnsServerStr, " \n")
+	resolverString = strings.Trim(resolverString, " ")
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		line := scanner.Text()
-		line = strings.Trim(line, " \n")
-		if line == dnsServerStr {
+		line := strings.Trim(scanner.Text(), " ")
+		if line == resolverString {
 			return true, nil
 		}
 	}

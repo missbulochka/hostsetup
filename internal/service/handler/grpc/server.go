@@ -88,5 +88,15 @@ func (s *serverAPI) DeleteDNSServer(
 	ctx context.Context,
 	req *hsv1.DNSServerRequest,
 ) (*hsv1.SuccessResponse, error) {
-	panic("implement me")
+	dnsServer := req.DnsServer
+
+	if err := validate.IPValidate(dnsServer); err != nil {
+		return &hsv1.SuccessResponse{Success: false}, err
+	}
+
+	if err := s.setupDNS.DeleteDNSServer(ctx, dnsServer); err != nil {
+		return &hsv1.SuccessResponse{Success: false}, err
+	}
+
+	return &hsv1.SuccessResponse{Success: true}, nil
 }
