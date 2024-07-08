@@ -11,8 +11,9 @@ import (
 )
 
 const (
-	pwdToResolvConf  string = "/etc/resolv.conf"
-	resolvConfPrefix string = "nameserver "
+	pwdToResolvConf       string = "/etc/resolv.conf"
+	pwdToResolvConfBackup string = "/etc/resolv_backup.conf"
+	resolvConfPrefix      string = "nameserver "
 )
 
 type Setupping struct{}
@@ -32,8 +33,9 @@ func (sp *Setupping) SetHostname(ctx context.Context, hostname string) error {
 		return fmt.Errorf("%s:%w", op, err)
 	}
 
-	if err := VerifyHostname(hostname); err != nil {
-		return err
+	if err := verifyHostname(hostname); err != nil {
+		log.Printf("%s: %v", op, err)
+		return fmt.Errorf("%s:%w", op, err)
 	}
 	log.Printf("hostname successfully set")
 
@@ -80,7 +82,7 @@ func (sp *Setupping) AddDNSServer(ctx context.Context, dnsServer string) error {
 	defer file.Close()
 
 	resolverStringToAdd := resolvConfPrefix + dnsServer + "\n"
-	exist, err := DNSServerExists(file, resolverStringToAdd)
+	exist, err := dnsServerExists(file, resolverStringToAdd)
 	if err != nil {
 		log.Printf("%s: %v", op, err)
 		return fmt.Errorf("%s:%s", op, err)
@@ -103,34 +105,34 @@ func (sp *Setupping) AddDNSServer(ctx context.Context, dnsServer string) error {
 func (sp *Setupping) DeleteDNSServer(ctx context.Context, dnsServer string) error {
 	const op = "hostsetup: setupping.DeleteDNSServer"
 
-	file, err := os.OpenFile(pwdToResolvConf, os.O_RDWR, 0666)
+	file, err := os.OpenFile(pwdToResolvConf, os.O_RDONLY, 0444)
 	if err != nil {
 		log.Printf("%s: %v", op, err)
 		return fmt.Errorf("%s:%w", op, err)
 	}
 	defer file.Close()
 
-	log.Printf("delining dns server")
-	// TODO: копирование текущих настроек в резервный файл
-	resolverStringToDelete := resolvConfPrefix + dnsServer
-	var newFile string
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		if resolverStringToDelete != strings.Trim(line, " ") {
-			newFile = newFile + line + "\n"
-		}
+	fileBackup, err := resolvFileBackup(file)
+	if err != nil {
+		log.Printf("%s: %v", op, err)
+		return fmt.Errorf("%s:%w", op, err)
 	}
-	if err := scanner.Err(); err != nil {
+	defer fileBackup.Close()
+
+	newFile, err := removingStringInData(file, resolvConfPrefix+dnsServer)
+	if err != nil {
 		log.Printf("%s: %v", op, err)
 		return fmt.Errorf("%s:%w", op, err)
 	}
 
-	if err := os.WriteFile(pwdToResolvConf, []byte(newFile), 0666); err != nil {
+	log.Printf("deleting dns server")
+	if err := os.WriteFile(pwdToResolvConf, []byte(newFile), 0222); err != nil {
 		log.Printf("%s: %v", op, err)
 		return fmt.Errorf("%s:%w", op, err)
 	}
 	log.Printf("dns server successfully deleted")
+
+	os.Remove(fileBackup.Name())
 
 	return nil
 }

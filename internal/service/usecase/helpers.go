@@ -3,30 +3,24 @@ package setupping
 import (
 	"bufio"
 	"fmt"
-	"log"
+	"io"
 	"os"
 	"strings"
 )
 
-func VerifyHostname(hostname string) error {
-	const op = "hostsetup: services.VerifyHostname "
-
+func verifyHostname(hostname string) error {
 	currentHostname, err := os.Hostname()
 	if err != nil {
-		log.Printf("%s: %v", op, err)
-		return fmt.Errorf("%s:%w", op, err)
+		return err
 	}
 	if currentHostname != hostname {
-		log.Printf("%s: %v", op, err)
-		return fmt.Errorf("%s:%s", op, "failed to change hostname")
+		return fmt.Errorf("%s", "failed to change hostname")
 	}
 
 	return nil
 }
 
-func DNSServerExists(file *os.File, resolverString string) (bool, error) {
-	const op = "hostsetup: services.DNSServerExists"
-
+func dnsServerExists(file *os.File, resolverString string) (bool, error) {
 	resolverString = strings.Trim(resolverString, " ")
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -36,9 +30,50 @@ func DNSServerExists(file *os.File, resolverString string) (bool, error) {
 		}
 	}
 	if err := scanner.Err(); err != nil {
-		log.Printf("%s: %v", op, err)
-		return false, fmt.Errorf("%s:%w", op, err)
+		return false, err
 	}
 
 	return false, nil
+}
+
+func resolvFileBackup(originFile *os.File) (*os.File, error) {
+	fileBackup, err := os.OpenFile(pwdToResolvConfBackup, os.O_CREATE|os.O_WRONLY, 0222)
+	if err != nil {
+		return nil, err
+	}
+
+	if _, err := io.Copy(fileBackup, originFile); err != nil {
+		fileBackup.Close()
+		return nil, err
+	}
+
+	if _, err := originFile.Seek(0, 0); err != nil {
+		fileBackup.Close()
+		return nil, err
+	}
+
+	return fileBackup, nil
+}
+
+func removingStringInData(file *os.File, resolverStringToDelete string) (string, error) {
+	exist := false
+	var newFile string
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if resolverStringToDelete != strings.TrimSpace(line) {
+			newFile = newFile + line + "\n"
+			continue
+		}
+		exist = true
+	}
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+
+	if !exist {
+		return "", fmt.Errorf("%s", "dns server doesn't exist")
+	}
+
+	return newFile, nil
 }
