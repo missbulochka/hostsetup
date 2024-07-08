@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	services "hostsetup-service/internal/service/service"
 	"log"
 	"os"
 	"os/exec"
@@ -33,7 +32,7 @@ func (sp *Setupping) SetHostname(ctx context.Context, hostname string) error {
 		return fmt.Errorf("%s:%w", op, err)
 	}
 
-	if err := services.VerifyHostname(hostname); err != nil {
+	if err := VerifyHostname(hostname); err != nil {
 		return err
 	}
 	log.Printf("hostname successfully set")
@@ -81,7 +80,7 @@ func (sp *Setupping) AddDNSServer(ctx context.Context, dnsServer string) error {
 	defer file.Close()
 
 	resolverStringToAdd := resolvConfPrefix + dnsServer + "\n"
-	exist, err := services.DNSServerExists(file, resolverStringToAdd)
+	exist, err := DNSServerExists(file, resolverStringToAdd)
 	if err != nil {
 		log.Printf("%s: %v", op, err)
 		return fmt.Errorf("%s:%s", op, err)
