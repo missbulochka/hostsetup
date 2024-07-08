@@ -21,10 +21,10 @@ func verifyHostname(hostname string) error {
 }
 
 func dnsServerExists(file *os.File, resolverString string) (bool, error) {
-	resolverString = strings.Trim(resolverString, " ")
+	resolverString = strings.TrimSpace(resolverString)
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		line := strings.Trim(scanner.Text(), " ")
+		line := strings.TrimSpace(scanner.Text())
 		if line == resolverString {
 			return true, nil
 		}

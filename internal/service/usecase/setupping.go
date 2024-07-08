@@ -56,7 +56,7 @@ func (sp *Setupping) ListDNSServers(ctx context.Context, dnsServers *[]string) e
 	log.Printf("reading dns servers")
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		line := strings.Trim(scanner.Text(), " ")
+		line := strings.TrimSpace(scanner.Text())
 		if strings.HasPrefix(line, resolvConfPrefix) {
 			*dnsServers = append(*dnsServers, strings.TrimPrefix(line, resolvConfPrefix))
 		}
