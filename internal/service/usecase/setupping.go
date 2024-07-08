@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 )
 
 const (
@@ -16,7 +17,9 @@ const (
 	resolvConfPrefix      string = "nameserver "
 )
 
-type Setupping struct{}
+type Setupping struct {
+	mu sync.Mutex
+}
 
 func New() *Setupping {
 	return &Setupping{}
@@ -46,6 +49,9 @@ func (sp *Setupping) SetHostname(ctx context.Context, hostname string) error {
 func (sp *Setupping) ListDNSServers(ctx context.Context, dnsServers *[]string) error {
 	const op = "hostsetup: setupping.ListDNSServers"
 
+	sp.mu.Lock()
+	defer sp.mu.Unlock()
+
 	file, err := os.Open(pwdToResolvConf)
 	if err != nil {
 		log.Printf("%s: %v", op, err)
@@ -73,6 +79,9 @@ func (sp *Setupping) ListDNSServers(ctx context.Context, dnsServers *[]string) e
 // AddDNSServer add new dns server in the system
 func (sp *Setupping) AddDNSServer(ctx context.Context, dnsServer string) error {
 	const op = "hostsetup: setupping.AddDNSServer"
+
+	sp.mu.Lock()
+	defer sp.mu.Unlock()
 
 	file, err := os.OpenFile(pwdToResolvConf, os.O_APPEND|os.O_RDWR, 0666)
 	if err != nil {
@@ -105,6 +114,9 @@ func (sp *Setupping) AddDNSServer(ctx context.Context, dnsServer string) error {
 // DeleteDNSServer delete dns server from the system
 func (sp *Setupping) DeleteDNSServer(ctx context.Context, dnsServer string) error {
 	const op = "hostsetup: setupping.DeleteDNSServer"
+
+	sp.mu.Lock()
+	defer sp.mu.Unlock()
 
 	file, err := os.OpenFile(pwdToResolvConf, os.O_RDONLY, 0444)
 	if err != nil {
