@@ -11,6 +11,8 @@ build-images:
 		.
 
 # You can run the base with docker
+# Adding capability (--cap-add) is not a good practice, but due to the lack 
+# of alternatives it is a valid solution (https://github.com/moby/moby/issues/8902)
 run-base:
 	docker run \
 		--rm \
