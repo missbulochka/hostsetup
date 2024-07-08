@@ -88,6 +88,7 @@ func (sp *Setupping) AddDNSServer(ctx context.Context, dnsServer string) error {
 		return fmt.Errorf("%s:%s", op, err)
 	}
 	if exist {
+		log.Printf("%s:%s", op, "dns server already exist")
 		return fmt.Errorf("%s:%s", op, "dns server already exist")
 	}
 
