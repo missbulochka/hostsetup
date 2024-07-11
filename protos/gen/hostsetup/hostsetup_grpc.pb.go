@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -30,7 +31,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HostSetupClient interface {
 	SetHostname(ctx context.Context, in *HostnameRequest, opts ...grpc.CallOption) (*SuccessResponse, error)
-	ListDNSServers(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ListDNSServersResponse, error)
+	ListDNSServers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListDNSServersResponse, error)
 	AddDNSServer(ctx context.Context, in *DNSServerRequest, opts ...grpc.CallOption) (*SuccessResponse, error)
 	DeleteDNSServer(ctx context.Context, in *DNSServerRequest, opts ...grpc.CallOption) (*SuccessResponse, error)
 }
@@ -53,7 +54,7 @@ func (c *hostSetupClient) SetHostname(ctx context.Context, in *HostnameRequest, 
 	return out, nil
 }
 
-func (c *hostSetupClient) ListDNSServers(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ListDNSServersResponse, error) {
+func (c *hostSetupClient) ListDNSServers(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListDNSServersResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListDNSServersResponse)
 	err := c.cc.Invoke(ctx, HostSetup_ListDNSServers_FullMethodName, in, out, cOpts...)
@@ -88,7 +89,7 @@ func (c *hostSetupClient) DeleteDNSServer(ctx context.Context, in *DNSServerRequ
 // for forward compatibility
 type HostSetupServer interface {
 	SetHostname(context.Context, *HostnameRequest) (*SuccessResponse, error)
-	ListDNSServers(context.Context, *EmptyRequest) (*ListDNSServersResponse, error)
+	ListDNSServers(context.Context, *emptypb.Empty) (*ListDNSServersResponse, error)
 	AddDNSServer(context.Context, *DNSServerRequest) (*SuccessResponse, error)
 	DeleteDNSServer(context.Context, *DNSServerRequest) (*SuccessResponse, error)
 	mustEmbedUnimplementedHostSetupServer()
@@ -101,7 +102,7 @@ type UnimplementedHostSetupServer struct {
 func (UnimplementedHostSetupServer) SetHostname(context.Context, *HostnameRequest) (*SuccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetHostname not implemented")
 }
-func (UnimplementedHostSetupServer) ListDNSServers(context.Context, *EmptyRequest) (*ListDNSServersResponse, error) {
+func (UnimplementedHostSetupServer) ListDNSServers(context.Context, *emptypb.Empty) (*ListDNSServersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDNSServers not implemented")
 }
 func (UnimplementedHostSetupServer) AddDNSServer(context.Context, *DNSServerRequest) (*SuccessResponse, error) {
@@ -142,7 +143,7 @@ func _HostSetup_SetHostname_Handler(srv interface{}, ctx context.Context, dec fu
 }
 
 func _HostSetup_ListDNSServers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -154,7 +155,7 @@ func _HostSetup_ListDNSServers_Handler(srv interface{}, ctx context.Context, dec
 		FullMethod: HostSetup_ListDNSServers_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HostSetupServer).ListDNSServers(ctx, req.(*EmptyRequest))
+		return srv.(HostSetupServer).ListDNSServers(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

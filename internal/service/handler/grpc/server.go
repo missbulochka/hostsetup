@@ -6,6 +6,7 @@ import (
 	hsv1 "hostsetup-service/protos/gen/hostsetup"
 
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type serverAPI struct {
@@ -57,7 +58,7 @@ func (s *serverAPI) SetHostname(
 
 func (s *serverAPI) ListDNSServers(
 	ctx context.Context,
-	req *hsv1.EmptyRequest,
+	req *emptypb.Empty,
 ) (*hsv1.ListDNSServersResponse, error) {
 	dnsServers := make([]string, 0, 1)
 	if err := s.setupDNS.ListDNSServers(ctx, &dnsServers); err != nil {

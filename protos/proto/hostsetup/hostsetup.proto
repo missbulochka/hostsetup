@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 
 package hostsetup;
 
@@ -13,7 +14,7 @@ service HostSetup {
             body: "*"
         };
     }
-    rpc ListDNSServers (EmptyRequest) returns (ListDNSServersResponse) {
+    rpc ListDNSServers (google.protobuf.Empty) returns (ListDNSServersResponse) {
         option (google.api.http) = {
             post: "/dnsservers"
         };
@@ -39,8 +40,6 @@ message HostnameRequest {
 message SuccessResponse {
     bool success = 1;
 }
-
-message EmptyRequest {}
 
 message ListDNSServersResponse {
     repeated string list = 1;
