@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"hostsetup-service/internal/client/app"
-	"hostsetup-service/pkg/config"
 	hsv1 "hostsetup-service/protos/gen/hostsetup"
 	"log"
 
@@ -15,11 +14,10 @@ var listDnsServersCmd = &cobra.Command{
 	Use:   "list-dns-servers",
 	Short: "Return list of dns-servers",
 	Long: `The command returns a list of dns-servers in a Linux system.
-	It takes no arguments. If success returns list, otherwise an error.`,
+It takes no arguments. If success returns list, otherwise an error.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		cfg := config.MustLoadConfig()
-
-		cli, err := app.NewClient(fmt.Sprint(cfg.GRPCServer, ":", cfg.GRPCPort))
+		cli, err := app.NewClient(socket)
+		fmt.Println(socket)
 		if err != nil {
 			log.Fatal("connection creation error")
 		}

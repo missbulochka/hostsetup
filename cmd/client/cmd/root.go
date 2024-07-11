@@ -6,7 +6,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// rootCmd represents the base command when called without any subcommands
+var socket string
+
 var rootCmd = &cobra.Command{
 	Use:   "hostsetup",
 	Short: "Set hostname and change the list of dns servers.",
@@ -14,8 +15,6 @@ var rootCmd = &cobra.Command{
 change (add and delete) the list of DNS servers.`,
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
@@ -24,5 +23,5 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().StringVarP(&socket, "socket", "s", "0.0.0.0:8081", "Server and port of the service")
 }

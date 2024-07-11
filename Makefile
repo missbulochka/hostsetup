@@ -27,7 +27,7 @@ run-base:
 run-service:
 	docker run \
 		--rm \
-		-p 8081:8081 \
+		-p 8081:8080 \
 		--env-file=hs.env \
 		--cap-add SYS_ADMIN \
 		hostsetup:1.0

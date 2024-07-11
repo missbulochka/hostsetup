@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"hostsetup-service/internal/client/app"
-	"hostsetup-service/pkg/config"
 	hsv1 "hostsetup-service/protos/gen/hostsetup"
 	"log"
 
@@ -15,7 +14,7 @@ var deleteDnsServerCmd = &cobra.Command{
 	Use:   "delete-dns-server",
 	Short: "Delete dns server",
 	Long: `The command delete the dns-server from a Linux system.
-	It takes one argument. If success returns "success", otherwise an error.`,
+It takes one argument. If success returns "success", otherwise an error.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
@@ -24,9 +23,7 @@ var deleteDnsServerCmd = &cobra.Command{
 
 		dnsServer := args[0]
 
-		cfg := config.MustLoadConfig()
-
-		cli, err := app.NewClient(fmt.Sprint(cfg.GRPCServer, ":", cfg.GRPCPort))
+		cli, err := app.NewClient(socket)
 		if err != nil {
 			log.Fatal("connection creation error")
 		}
