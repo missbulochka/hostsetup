@@ -2,7 +2,7 @@ package main
 
 import (
 	"hostsetup-service/internal/service/app"
-	"hostsetup-service/internal/service/config"
+	"hostsetup-service/pkg/config"
 	"log"
 	"os"
 	"os/signal"

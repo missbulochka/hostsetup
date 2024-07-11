@@ -38,45 +38,7 @@
         ]
       }
     },
-    "/dnsservers/{dnsServer_1}": {
-      "post": {
-        "operationId": "HostSetup_DeleteDNSServer",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/hostsetupSuccessResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "dnsServer_1",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/HostSetupDeleteDNSServerBody"
-            }
-          }
-        ],
-        "tags": [
-          "HostSetup"
-        ]
-      }
-    },
-    "/dnsservers/{dnsServer}": {
+    "/dnsservers/adding": {
       "post": {
         "operationId": "HostSetup_AddDNSServer",
         "responses": {
@@ -95,17 +57,43 @@
         },
         "parameters": [
           {
-            "name": "dnsServer",
-            "in": "path",
+            "name": "body",
+            "in": "body",
             "required": true,
-            "type": "string"
+            "schema": {
+              "$ref": "#/definitions/hostsetupDNSServerRequest"
+            }
+          }
+        ],
+        "tags": [
+          "HostSetup"
+        ]
+      }
+    },
+    "/dnsservers/deleting": {
+      "post": {
+        "operationId": "HostSetup_DeleteDNSServer",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/hostsetupSuccessResponse"
+            }
           },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
           {
             "name": "body",
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/HostSetupAddDNSServerBody"
+              "$ref": "#/definitions/hostsetupDNSServerRequest"
             }
           }
         ],
@@ -148,11 +136,13 @@
     }
   },
   "definitions": {
-    "HostSetupAddDNSServerBody": {
-      "type": "object"
-    },
-    "HostSetupDeleteDNSServerBody": {
-      "type": "object"
+    "hostsetupDNSServerRequest": {
+      "type": "object",
+      "properties": {
+        "dnsServer": {
+          "type": "string"
+        }
+      }
     },
     "hostsetupHostnameRequest": {
       "type": "object",

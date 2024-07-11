@@ -20,13 +20,13 @@ service HostSetup {
     }
     rpc AddDNSServer (DNSServerRequest) returns (SuccessResponse) {
         option (google.api.http) = {
-            post: "/dnsservers/{dnsServer}"
+            post: "/dnsservers/adding"
             body: "*"
         };
     }
     rpc DeleteDNSServer (DNSServerRequest) returns (SuccessResponse) {
         option (google.api.http) = {
-            post: "/dnsservers/{dnsServer}"
+            post: "/dnsservers/deleting"
             body: "*"
         };
     }
