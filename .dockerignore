@@ -3,6 +3,7 @@ Makefile
 hostname.png
 README.md
 .editorconfig
+hostsetup
 docker/
 cmd/client/
 internal/client/
