@@ -23,5 +23,5 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&socket, "socket", "s", "0.0.0.0:8081", "Server and port of the service")
+	rootCmd.PersistentFlags().StringVarP(&socket, "server", "s", "0.0.0.0:8081", "Server and port of the service")
 }

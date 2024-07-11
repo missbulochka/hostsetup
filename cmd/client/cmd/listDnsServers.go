@@ -17,7 +17,7 @@ var listDnsServersCmd = &cobra.Command{
 It takes no arguments. If success returns list, otherwise an error.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cli, err := app.NewClient(socket)
-		fmt.Println(socket)
+
 		if err != nil {
 			log.Fatal("connection creation error")
 		}
