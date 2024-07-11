@@ -11,18 +11,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var setHostnameCmd = &cobra.Command{
-	Use:   "set-hostname",
-	Short: "Set new hostname",
-	Long: `The command sets hostname for Linux. Takes only one argument -
-	the new hostname. If success returns "success", otherwise an error.`,
+var deleteDnsServerCmd = &cobra.Command{
+	Use:   "delete-dns-server",
+	Short: "Delete dns server",
+	Long: `The command delete the dns-server from a Linux system.
+	It takes one argument. If success returns "success", otherwise an error.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
 			log.Panic("incorrect number of arguments")
 		}
 
-		hostname := args[0]
+		dnsServer := args[0]
 
 		cfg := config.MustLoadConfig()
 
@@ -31,9 +31,9 @@ var setHostnameCmd = &cobra.Command{
 			log.Fatal("connection creation error")
 		}
 
-		success, err := cli.SetHostname(
+		success, err := cli.DeleteDNSServer(
 			context.Background(),
-			&hsv1.HostnameRequest{Name: hostname},
+			&hsv1.DNSServerRequest{DnsServer: dnsServer},
 		)
 		if err != nil {
 			log.Fatal(err)
@@ -44,5 +44,5 @@ var setHostnameCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(setHostnameCmd)
+	rootCmd.AddCommand(deleteDnsServerCmd)
 }
