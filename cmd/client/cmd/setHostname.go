@@ -15,7 +15,7 @@ var setHostnameCmd = &cobra.Command{
 	Use:   "set-hostname",
 	Short: "Set new hostname",
 	Long: `The command sets hostname for Linux. Takes only one argument -
-the new hostname. If success returns zero, otherwise an error.`,
+the new hostname. If success returns "success", otherwise an error.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) < 1 {
