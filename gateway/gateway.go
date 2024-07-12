@@ -13,6 +13,8 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+var gwAddr = fmt.Sprintf("%s:%s", "0.0.0.0", "8083")
+
 func run() error {
 	cfg := config.MustLoadConfig()
 
@@ -20,16 +22,16 @@ func run() error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	addr := fmt.Sprintf("%s:%s", cfg.GRPCServer, cfg.GRPCPort)
+	hsAddr := fmt.Sprintf("%s:%s", cfg.GRPCServer, cfg.GRPCPort)
 
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	err := hsv1.RegisterHostSetupHandlerFromEndpoint(ctx, mux, addr, opts)
+	err := hsv1.RegisterHostSetupHandlerFromEndpoint(ctx, mux, hsAddr, opts)
 	if err != nil {
 		return err
 	}
 
-	return http.ListenAndServe(addr, mux)
+	return http.ListenAndServe(gwAddr, mux)
 }
 
 func main() {

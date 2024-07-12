@@ -8,3 +8,4 @@ docker/
 cmd/client/
 internal/client/
 protos/proto/
+gateway/

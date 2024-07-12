@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"hostsetup-service/internal/client/app"
-	hsv1 "hostsetup-service/protos/gen/hostsetup"
 	"log"
 
 	"github.com/spf13/cobra"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 var listDnsServersCmd = &cobra.Command{
@@ -22,7 +22,7 @@ It takes no arguments. If success returns list, otherwise an error.`,
 			log.Fatal("connection creation error")
 		}
 
-		list, err := cli.ListDNSServers(context.Background(), &hsv1.EmptyRequest{})
+		list, err := cli.ListDNSServers(context.Background(), &emptypb.Empty{})
 		if err != nil {
 			log.Fatal(err)
 		}

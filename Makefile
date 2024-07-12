@@ -27,7 +27,7 @@ run-base:
 run-service:
 	docker run \
 		--rm \
-		-p 8081:8080 \
+		-p 8081:8081 \
 		--env-file=hs.env \
 		--cap-add SYS_ADMIN \
 		hostsetup:1.0
@@ -36,6 +36,9 @@ run-service:
 build-cli:
 	go build -o ./hostsetup ./cmd/client
 
+# You can run gateway with command
+run-gateway:
+	go run ./gateway/gateway.go
 
 # You can generate Client, Server and documentation using proto file
 pb-generate:
