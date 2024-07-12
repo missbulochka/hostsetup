@@ -104,3 +104,8 @@ It is important to note that the cli application has the `--server` flag, in whi
 ```bash
 ./hostsetup add-dns-server 8.8.8.8 --server 0.0.0.0:8085
 ```
+
+If you need help run:
+```bash
+./hostsetup --help
+```
