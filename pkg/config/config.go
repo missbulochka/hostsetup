@@ -8,11 +8,11 @@ type GRPCConfig struct {
 }
 
 // MustLoadConfig reads config from env and init *Config value
-func MustLoadConfig() *GRPCConfig {
+func MustLoadConfig() (*GRPCConfig, error) {
 	var cfg = new(GRPCConfig)
 	if err := envconfig.Process("", cfg); err != nil {
-		panic("hostsetup: failed to read config: " + err.Error())
+		return nil, err
 	}
 
-	return cfg
+	return cfg, nil
 }

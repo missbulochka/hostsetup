@@ -10,7 +10,10 @@ import (
 )
 
 func main() {
-	cfg := config.MustLoadConfig()
+	cfg, err := config.MustLoadConfig()
+	if err != nil {
+		panic("hostsetup: failed to read config: " + err.Error())
+	}
 
 	hostsetupService := app.New(cfg.GRPCServer, cfg.GRPCPort)
 
