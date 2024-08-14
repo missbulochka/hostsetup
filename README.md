@@ -97,7 +97,7 @@ go build -o ./hostsetup ./cmd/client
 
 If you need RESTful API, run gRPC-gateway (by default it runs on port 8083) with command:
 ```bash
-go run ./gateway/gateway.go
+go run ./cmd/gateway/gateway.go
 ```
 
 It is important to note that the cli application has the `--server` flag, in which you can specify the address at which the service runs (by default port is 8081). Example:
